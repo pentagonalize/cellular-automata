@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Cellular Automatarms</title>
+    </head>
+    <body onload="draw();">
+        <canvas id="canvas" width="900" height="900"></canvas>
+        <script type="text/javascript" src="cells.js"></script>
+        <script> startCellUpdate(); </script>
+        <input id="stop" type="button" onclick="stopCellUpdate()" value="stop"/>
+        <input id="start" type="button" onclick="startCellUpdate()"value="start"/>
+        <input id="reset" type="button" onclick="resetCells()"value="reset"/>
+        <input id="newCodeInput" type="input" value=""/>
+        <input id="newCode" type="button" onclick="newCode()"value="new code"/>
+        <input id="randomCode" type="button" onclick="randomCode()"value="random code"/>
+    </body>
+</html>
