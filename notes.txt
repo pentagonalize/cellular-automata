@@ -1,0 +1,29 @@
+Cellular automata. We define a CA as a dynamical
+system with M possible states, which updates its value
+based on its current value and D other cells—usually its
+immediate neighbors in a square lattice. There are MD
+possible unique M-ary input strings to a CA function,
+which we individually refer to as σ. A cellular automaton
+implements an operator G(σ) that is fully specified by a
+arXiv:1809.02942v2 [nlin.CG] 16 Jan 2020
+2
+list of transition rules σ → m, m ∈ 0, 1, ..., M − 1, and
+there are MMD
+possible unique G(σ), each implementing
+a different ruleset. For the Game of Life, M = 2, D = 9,
+and so G(σ) is a Boolean function that maps each of the
+2
+9 = 512 possible 9-bit input strings to a single bit. A
+defining feature of CA is the locality of dynamical update
+rule, which ensures that the rule domain is small; the
+size of D thus sets an upper bound on the rate at which
+information propagates across space
+
+Cellular automata as convolutional neural networks [Gilpin 2020]
+
+
+There are two representation of rule sets I'm thinking of
+1) Probability distribution of the ruleset, probability of each bit being 1 or 0. Represented as a polynomial distribution, with coefficients stored in an array. Can combine different rulesets by combining their polynomials. 
+
+2) Logical tree. With each branch being AND, OR, NAND, NOR, NOT, IF , XOR. The paper also has ADFO, and ADFl. automatically defined functions? Anyways, the leaves of the tree will be the bit values of each cell. 
+I feel like the second approach is more semantically aware. 
