@@ -32,13 +32,15 @@ void randomArrayGen(int *transferArray){
 }
 
 struct transferTree {
-    // 0:leaf, 1:AND, 2:OR, 3:NAND, 4:NOR, 5:NOT, 6:IF , 7:XOR
+    // tree parent
+    struct transferTree *prev;
+    // 0:leaf, 1:AND, 2:OR, 3:NAND, 4:NOR, 5:NOT, 6:IF, 7:XOR
     int operation;
-    // bit value of adjacent cell. -1 if not leaf
+    // 0-8, indicating to which adjacent cell. -1 if not leaf
     int data;
     // tree children. Handled by parsing of tree
-    struct transferTree* left;
-    struct transferTree* right;
+    struct transferTree *left;
+    struct transferTree *right;
 };
 typedef struct transferTree transferTree;
 
@@ -80,7 +82,6 @@ int size(transferTree *t){
         else{
             return (1+size(t->left)+size(t->right));
         }
-
     }
 }
 
@@ -154,7 +155,7 @@ void freeTransferTree(transferTree *t){
 
 int transferTreeEval(transferTree *t, int cn, int cne, int ce, int cse, int cs, int csw, int cw, int cnw, int c){
     // can i just cast as char?
-    // 0:leaf, 1:AND, 2:OR, 3:NAND, 4:NOR, 5:NOT, 6:IF , 7:XOR
+    // 0:leaf, 1:AND, 2:OR, 3:NAND, 4:NOR, 5:NOT, 6:IF, 7:XOR
     if(t->operation == 0){
         switch(t->data){
             case 0:
@@ -215,7 +216,7 @@ int transferTreeEval(transferTree *t, int cn, int cne, int ce, int cse, int cs, 
     }
     else if(t->operation == 5){
         // not
-        // only left should be nnt null
+        // only left should be not null
         int l = transferTreeEval(t->left, cn, cne, ce, cse, cs, csw, cw, cnw, c);
         if(l){
             return 0;
@@ -263,6 +264,7 @@ transferTree *randomTransferTreeGen(int depth){
     // generates a random transfertree of maximum height depth
     if(depth > 0){
         transferTree *t = malloc(sizeof(transferTree));
+        t->prev = NULL;
         int operation = rand()%8;
         t->operation = operation;
         if(operation == 0){
@@ -271,20 +273,23 @@ transferTree *randomTransferTreeGen(int depth){
         else{
             t->data = -1;
         }
-
         if(operation == 5){
             t->left = randomTransferTreeGen(depth-1);
+            t->left->prev = t;
             t->right = NULL;
         }
         else{
             t->left = randomTransferTreeGen(depth-1);
+            t->left->prev = t;
             t->right = randomTransferTreeGen(depth-1);
+            t->right->prev = t;
         }
         return t;
     }
     else{
         transferTree *t = malloc(sizeof(transferTree));
         t->operation = 0;
+        t->prev = NULL;
         t->data = rand()%9;
         t->left = NULL;
         t->right = NULL;
@@ -299,12 +304,31 @@ transferTree *copyTransferTree(transferTree *src){
     }
     else{
         transferTree *t = malloc(sizeof(transferTree));
-        t-> operation = src->operation;
+        t->prev = src->prev;
+        t->operation = src->operation;
         t->data = src->data;
         t->left = copyTransferTree(src->left);
         t->right = copyTransferTree(src->right);
         return t;
     }
+}
+
+int isLeftChildOf(transferTree *t1, transferTree *t2){
+    if(t1->prev == t2){
+        if(t2->left==t1){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int isRightChildOf(transferTree *t1, transferTree *t2){
+    if(t1->prev == t2){
+        if(t2->right==t1){
+            return 1;
+        }
+    }
+    return 0;
 }
 
 transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
@@ -318,17 +342,70 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
         // the choice of left is arbitrary (simply because I haven't implemented a "prev" field in the transferTree)
         transferTree *dst = treeIndex(t,rand()%t1_size);
         transferTree *src = treeIndex(t2,rand()%t2_size);
-        freeTransferTree(dst->left);
-        dst->left = copyTransferTree(src);
+        if(isLeftChildOf(dst, dst->prev)){
+            // dst is the left child of its parent
+            dst->prev->left = copyTransferTree(src);
+            freeTransferTree(dst);
+        }
+        else if(isRightChildOf(dst, dst->prev)){
+            // dst is the left child of its parent
+            dst->prev->left = copyTransferTree(src);
+            freeTransferTree(dst);
+        }
+        else{
+            // some error happened. Just cut off the tree at the dst point?
+            // other default behavior is ok too
+            freeTransferTree(dst->left);
+            freeTransferTree(dst->right);
+            dst->left = NULL;
+            dst->right = NULL;
+        }
     }
     else{
         t = copyTransferTree(t2);
         // select a random node from t2, and assign a random node from t1 as its left subtree
         transferTree *dst = treeIndex(t,rand()%t2_size);
         transferTree *src = treeIndex(t1,rand()%t1_size);
-        freeTransferTree(dst->right);
-        dst->right = copyTransferTree(src);
+        if(isLeftChildOf(dst, dst->prev)){
+            // t1 is the left child of its parent
+            dst->prev->left = copyTransferTree(src);
+            freeTransferTree(dst);
+        }
+        else if(isRightChildOf(dst, dst->prev)){
+            // t1 is the left child of its parent
+            dst->prev->left = copyTransferTree(src);
+            freeTransferTree(dst);
+        }
+        else{
+            // some error happened. Just cut off the tree at the dst point?
+            // other default behavior is ok too
+            freeTransferTree(dst->left);
+            freeTransferTree(dst->right);
+            dst->left = NULL;
+            dst->right = NULL;
+        }
     }
     return t;
 }
 
+void mutate(transferTree *t, double p){
+    if(t != NULL){
+        if(rand()/RAND_MAX < p){
+            // there is a problem if we switch from a binary to a unary operator
+            if(t->operation == 0){
+                t->data = rand()%8;
+            }
+            else{
+                if(t->operation == 5){
+                    mutate(t->left, p);
+                }
+                else{
+                    int choices[6] = {1,2,3,4,6,7};
+                    t->operation = choices[rand()%6];
+                    mutate(t->left, p);
+                    mutate(t->right, p);
+                }
+            }
+        }
+    }
+}

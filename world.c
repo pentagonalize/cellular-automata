@@ -83,6 +83,7 @@ void display(){
     }
     glFlush();
 }
+
 void keyPressed (unsigned char key, int x, int y) {  
     if(key == 'q'){
         printf("dawnaballz\n");
@@ -100,8 +101,8 @@ void onClick(int button, int state, int x, int y){
     int closest_y_ind = world_height-(int)(y * world_height / screen_height);
     if(state == GLUT_DOWN){
         for(int i=closest_x_ind-10; i<closest_x_ind+10;i++){
-            for(int j=closest_y_ind-10;j<closest_y_ind+10; j++){
-                if(rand()%5 >= 1){
+            for(int j=closest_y_ind-10;j<closest_y_ind+5; j++){
+                if(rand()%7 >= 1){
                     cellArray[(i+world_width)%world_width][(j+world_height)%world_height]->state = 1;
                 }
             }
