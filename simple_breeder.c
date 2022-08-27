@@ -51,6 +51,7 @@ void keyPressed (unsigned char key, int x, int y) {
         for(int i=0;i<9;i++){
             freeTransferTree(trees[i]);
             trees[i] = crossoverTransferTrees(t1, t2);
+            mutate(trees[i], 0.05);
             parseTransferTree(trees[i], wrlds[i]->transferArray);
             reInitializeCells(wrlds[i]);
         }
@@ -58,18 +59,32 @@ void keyPressed (unsigned char key, int x, int y) {
     }
     if(key == 'f'){
         // set parent 1
-        world_index = (x/world_width%3)*3+(y/world_height);
+        world_index = (x/world_width%3)*3+((world_height-y)/world_height);
+        freeTransferTree(t1);
         t1 = copyTransferTree(trees[world_index]);
     }
     if(key == 'j'){
         //set parent 2
-        world_index = (x/world_width%3)*3+(y/world_height);
+        world_index = (x/world_width%3)*3+((world_height-y)/world_height);
+        freeTransferTree(t2);
         t2 = copyTransferTree(trees[world_index]);
     }
+    printf("%d,%d, %d\n",x,y,world_index);
 }
+
+void myMouseFunc(int button, int state, int x, int y){
+	if(button == GLUT_LEFT_BUTTON) {
+		world_index = (x/world_width%3)*3+((world_height-y)/world_height);
+        printf("%d\n",world_index);
+		for(int i=0; i<512; i++){
+            printf("%d", wrlds[world_index]->transferArray[i]);
+        }
+        printf("\n\n");
+	}
+}
+
 int main(int argc, char *argv[])
 {   
-
     srand(time(NULL));
     trees = malloc(9*sizeof(transferTree));
     t1 = malloc(sizeof(transferTree));
@@ -78,6 +93,9 @@ int main(int argc, char *argv[])
     for(int i=0;i<9;i++){
         trees[i] = randomTransferTreeGen(4);
     }
+
+    t1 = copyTransferTree(trees[0]);
+    t2 = copyTransferTree(trees[1]);
 
     wrlds = malloc(9*sizeof(world));
     for(int i=0;i<3;i++){
@@ -101,17 +119,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    /*
-        Can we term the 512 bit integer the transition function signature?
-        transition string? transition table? transition array. transition number?
-        Idea: Characteristic function? for generating transition arrays. A probability
-        function p over [0,512], where p(x) is the expected value of the x-th bit of
-        the transition array.
-
-        Plan is to use polynomial characteristic functions that way we can use genetic
-        programming techniques, since the crossover of two polynomial functions can be
-        reasonably defined
-    */
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     // window dimensions
@@ -126,6 +133,7 @@ int main(int argc, char *argv[])
     // display loop
     glutDisplayFunc(display);
     glClear(GL_COLOR_BUFFER_BIT);
+    glutMouseFunc(myMouseFunc);
     glutIdleFunc(display);
     glutMainLoop();
     return 0;

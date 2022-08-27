@@ -67,21 +67,33 @@ int size(transferTree *t){
     if(t == NULL){
         return 0;
     }
-    else if(t->left == NULL){
-        if(t->right == NULL){
-            return 1;
-        }
-        else{
-           return (1+size(t->right));
+    else if(t->operation > 0){
+        switch(t->operation){
+            case 1:
+                return (1+size(t->left)+size(t->right));
+                break;
+            case 2:
+                return (1+size(t->left)+size(t->right));
+                break;
+            case 3:
+                return (1+size(t->left)+size(t->right));
+                break;
+            case 4:
+                return (1+size(t->left)+size(t->right));
+                break;
+            case 5:
+                return (1+size(t->right));
+                break;
+            case 6:
+                return (1+size(t->left)+size(t->right));
+                break;
+            case 7:
+                return (1+size(t->left)+size(t->right));
+                break;
         }
     }
     else{
-        if(t->right == NULL){
-            return (1+size(t->left));
-        }
-        else{
-            return (1+size(t->left)+size(t->right));
-        }
+        return 1;
     }
 }
 
@@ -93,18 +105,25 @@ void printTransferTreeHelp(transferTree *t){
             switch(t->operation){
                 case 1:
                     printf("and ");
+                    break;
                 case 2:
                     printf("or ");
+                    break;
                 case 3:
                     printf("nand ");
+                    break;
                 case 4:
                     printf("nor ");
+                    break;
                 case 5:
                     printf("not ");
+                    break;
                 case 6:
                     printf("if ");
+                    break;
                 case 7:
                     printf("xor ");
+                    break;
             }
             printTransferTreeHelp(t->left);
             printf(" ");
@@ -115,6 +134,9 @@ void printTransferTreeHelp(transferTree *t){
         }
         else{
             printf("%d",t->data);
+            // if(t->left != NULL || t->right != NULL){
+            //     printf("IM LEAF BUT HAVE CHIDLREN\n");
+            // }
         }
     }
 }
@@ -126,8 +148,31 @@ void printTransferTree(transferTree *t){
     printf("\n");
 }
 
+void printPointers(transferTree *t){
+    // returns # of nodes in transferTree
+    if(t){
+        // printTransferTree(t);
+        printf("(t: %d, ", t );
+        printf("t->prev %d)\n", t->prev);
+        // for some reason, leaf children are not null?
+        if(t->operation != 0 && t->left){
+            // printf("going left\n");
+            // printTransferTree(t->left);
+            printPointers(t->left);
+            if(t->right){
+                // printf("going right\n");
+                // printTransferTree(t->right);
+                printPointers(t->right);
+            }
+        }
+        else{
+            // printf("null childre %d\n", t);
+        }
+    }
+}
+
 transferTree *treeIndex(transferTree *t, int i){
-    // This is supposed to traverse the tree left to right and return the ith node
+    // This is supposed to traverse the tree left to right, then up to down, and return the ith node
     // Used when randomly selecting a node from which to do crossover
     if(i == 0){
         return t;
@@ -143,10 +188,10 @@ transferTree *treeIndex(transferTree *t, int i){
 void freeTransferTree(transferTree *t){
     // free a transferTree
     if(t){
-        if(t->left){
+        if(t->operation != 0 && t->left){
             freeTransferTree(t->left);
         }
-        if(t->right){
+        if(t->operation != 0 && t->right){
             freeTransferTree(t->right);
         }
         free(t);
@@ -265,24 +310,29 @@ transferTree *randomTransferTreeGen(int depth){
     if(depth > 0){
         transferTree *t = malloc(sizeof(transferTree));
         t->prev = NULL;
+        // choose a random operation
         int operation = rand()%8;
         t->operation = operation;
+
         if(operation == 0){
+            // if leaf, set leaf value
             t->data = rand()%9;
         }
         else{
+            // not leaf, set leaf to -1, create subtree
             t->data = -1;
-        }
-        if(operation == 5){
-            t->left = randomTransferTreeGen(depth-1);
-            t->left->prev = t;
-            t->right = NULL;
-        }
-        else{
-            t->left = randomTransferTreeGen(depth-1);
-            t->left->prev = t;
-            t->right = randomTransferTreeGen(depth-1);
-            t->right->prev = t;
+            if(operation == 5){
+                // operation is not, only do left subtree
+                t->left = randomTransferTreeGen(depth-1);
+                t->left->prev = t;
+                t->right = NULL;
+            }
+            else{
+                t->left = randomTransferTreeGen(depth-1);
+                t->left->prev = t;
+                t->right = randomTransferTreeGen(depth-1);
+                t->right->prev = t;
+            }
         }
         return t;
     }
@@ -304,27 +354,46 @@ transferTree *copyTransferTree(transferTree *src){
     }
     else{
         transferTree *t = malloc(sizeof(transferTree));
-        t->prev = src->prev;
+        t->prev = NULL;
         t->operation = src->operation;
         t->data = src->data;
-        t->left = copyTransferTree(src->left);
-        t->right = copyTransferTree(src->right);
+        // again for some reason children nodes are nonNull
+        if(t->operation != 0 && src->left){
+            // printf("op: %d\n",t->operation);
+            t->left = copyTransferTree(src->left);
+            t->left->prev = t;
+            t->right = NULL;
+            if(src->right){
+                // printf("op: %d, rightnotnull\n", t->operation);
+                t->right = copyTransferTree(src->right);
+                t->right->prev = t;
+            }
+        }
+        // printf("tee\n");
+        // printTransferTree(t);
+        // printf("teend\n");
         return t;
     }
 }
 
-int isLeftChildOf(transferTree *t1, transferTree *t2){
-    if(t1->prev == t2){
-        if(t2->left==t1){
+int isLeftChildOf(transferTree *t_child, transferTree *t_parent){
+    // printf("t_child: %d, t_child->prev: %d, t_parent: %d, t_parent->left: %d\n",t_child, t_child->prev, t_parent, (t_child->prev)->left);
+    if(t_child->prev == t_parent){
+        // printf("correct parent\n");
+        if(t_parent->left == t_child){
+            // printf("correct side\n");
             return 1;
         }
     }
     return 0;
 }
 
-int isRightChildOf(transferTree *t1, transferTree *t2){
-    if(t1->prev == t2){
-        if(t2->right==t1){
+int isRightChildOf(transferTree *t_child, transferTree *t_parent){
+    // printf("t_child: %d, t_child->prev: %d, t_parent: %d, t_parent->right %d\n",t_child, t_child->prev, t_parent, (t_child->prev)->right);
+    if(t_child->prev == t_parent){
+        // printf("correct parent\n");
+        if(t_parent->right == t_child){
+            // printf("correct side\n");
             return 1;
         }
     }
@@ -337,23 +406,42 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
     int t2_size = size(t2);
     transferTree *t = malloc(sizeof(transferTree));
     if(rand()%2==0){
+        // printf("root t1\n");
         t = copyTransferTree(t1);
+        // printf("done copying\n");
         // select a random node from t1, and assign a random node from t2 as its left subtree
-        // the choice of left is arbitrary (simply because I haven't implemented a "prev" field in the transferTree)
+        // printf("printingtree\n");
         transferTree *dst = treeIndex(t,rand()%t1_size);
         transferTree *src = treeIndex(t2,rand()%t2_size);
-        if(isLeftChildOf(dst, dst->prev)){
+        // printf("dst: "); printTransferTree(dst);
+        // printf("src: "); printTransferTree(src);
+        // printf("t pointers:\n");
+        // printPointers(t);
+        if(dst == NULL){
+            return t;
+        }
+        else if(dst->prev == NULL){
+            freeTransferTree(t);
+            t = copyTransferTree(src);
+        }
+        else if(isLeftChildOf(dst, dst->prev)){
             // dst is the left child of its parent
+            // printf("ball_left\n");
             dst->prev->left = copyTransferTree(src);
+            // printf("dst->prev->left: %d\n", dst->prev->left);
+            // printf("dst: %d\n", dst);
             freeTransferTree(dst);
         }
         else if(isRightChildOf(dst, dst->prev)){
-            // dst is the left child of its parent
-            dst->prev->left = copyTransferTree(src);
+            // dst is the right child of its parent
+            // printf("ball_right\n");
+            dst->prev->right = copyTransferTree(src);
+            // printf("dst->prev->right: %d\n", dst->prev->right);
+            // printf("dst: %d\n", dst);
             freeTransferTree(dst);
         }
         else{
-            // some error happened. Just cut off the tree at the dst point?
+            // printf("bad child\n");
             // other default behavior is ok too
             freeTransferTree(dst->left);
             freeTransferTree(dst->right);
@@ -362,21 +450,36 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
         }
     }
     else{
+        // printf("root t2\n");
         t = copyTransferTree(t2);
+        // printf("done copying\n");
         // select a random node from t2, and assign a random node from t1 as its left subtree
         transferTree *dst = treeIndex(t,rand()%t2_size);
         transferTree *src = treeIndex(t1,rand()%t1_size);
-        if(isLeftChildOf(dst, dst->prev)){
+
+        // printf("dst: "); printTransferTree(dst);
+        // printf("src: "); printTransferTree(src);
+        if(dst == NULL){
+            return t;
+        }
+        else if(dst->prev == NULL){
+            freeTransferTree(t);
+            t = copyTransferTree(src);
+        }
+        else if(isLeftChildOf(dst, dst->prev)){
             // t1 is the left child of its parent
+            // printf("ball_left\n");
             dst->prev->left = copyTransferTree(src);
             freeTransferTree(dst);
         }
         else if(isRightChildOf(dst, dst->prev)){
-            // t1 is the left child of its parent
-            dst->prev->left = copyTransferTree(src);
+            // t1 is the right child of its parent
+            // printf("ball_right\n");
+            dst->prev->right = copyTransferTree(src);
             freeTransferTree(dst);
         }
         else{
+            // printf("bad child\n");
             // some error happened. Just cut off the tree at the dst point?
             // other default behavior is ok too
             freeTransferTree(dst->left);
