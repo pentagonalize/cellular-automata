@@ -25,7 +25,7 @@ void transferArrayGen(int *transferArray, double *pc, int pclen){
 }
 
 void randomArrayGen(int *transferArray){
-    // r
+    // randomly generate a transfer array
     for(int i=0; i<512; i++){
         transferArray[i] = rand()%rand() < rand() ? 1 : 0;
     }
@@ -156,17 +156,10 @@ void printPointers(transferTree *t){
         printf("t->prev %d)\n", t->prev);
         // for some reason, leaf children are not null?
         if(t->operation != 0 && t->left){
-            // printf("going left\n");
-            // printTransferTree(t->left);
             printPointers(t->left);
             if(t->right){
-                // printf("going right\n");
-                // printTransferTree(t->right);
                 printPointers(t->right);
             }
-        }
-        else{
-            // printf("null childre %d\n", t);
         }
     }
 }
@@ -359,19 +352,14 @@ transferTree *copyTransferTree(transferTree *src){
         t->data = src->data;
         // again for some reason children nodes are nonNull
         if(t->operation != 0 && src->left){
-            // printf("op: %d\n",t->operation);
             t->left = copyTransferTree(src->left);
             t->left->prev = t;
             t->right = NULL;
             if(src->right){
-                // printf("op: %d, rightnotnull\n", t->operation);
                 t->right = copyTransferTree(src->right);
                 t->right->prev = t;
             }
         }
-        // printf("tee\n");
-        // printTransferTree(t);
-        // printf("teend\n");
         return t;
     }
 }
@@ -379,9 +367,7 @@ transferTree *copyTransferTree(transferTree *src){
 int isLeftChildOf(transferTree *t_child, transferTree *t_parent){
     // printf("t_child: %d, t_child->prev: %d, t_parent: %d, t_parent->left: %d\n",t_child, t_child->prev, t_parent, (t_child->prev)->left);
     if(t_child->prev == t_parent){
-        // printf("correct parent\n");
         if(t_parent->left == t_child){
-            // printf("correct side\n");
             return 1;
         }
     }
@@ -391,9 +377,7 @@ int isLeftChildOf(transferTree *t_child, transferTree *t_parent){
 int isRightChildOf(transferTree *t_child, transferTree *t_parent){
     // printf("t_child: %d, t_child->prev: %d, t_parent: %d, t_parent->right %d\n",t_child, t_child->prev, t_parent, (t_child->prev)->right);
     if(t_child->prev == t_parent){
-        // printf("correct parent\n");
         if(t_parent->right == t_child){
-            // printf("correct side\n");
             return 1;
         }
     }
@@ -406,17 +390,10 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
     int t2_size = size(t2);
     transferTree *t = malloc(sizeof(transferTree));
     if(rand()%2==0){
-        // printf("root t1\n");
         t = copyTransferTree(t1);
-        // printf("done copying\n");
         // select a random node from t1, and assign a random node from t2 as its left subtree
-        // printf("printingtree\n");
         transferTree *dst = treeIndex(t,rand()%t1_size);
         transferTree *src = treeIndex(t2,rand()%t2_size);
-        // printf("dst: "); printTransferTree(dst);
-        // printf("src: "); printTransferTree(src);
-        // printf("t pointers:\n");
-        // printPointers(t);
         if(dst == NULL){
             return t;
         }
@@ -426,22 +403,15 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
         }
         else if(isLeftChildOf(dst, dst->prev)){
             // dst is the left child of its parent
-            // printf("ball_left\n");
-            dst->prev->left = copyTransferTree(src);
-            // printf("dst->prev->left: %d\n", dst->prev->left);
-            // printf("dst: %d\n", dst);
+=            dst->prev->left = copyTransferTree(src);
             freeTransferTree(dst);
         }
         else if(isRightChildOf(dst, dst->prev)){
             // dst is the right child of its parent
-            // printf("ball_right\n");
             dst->prev->right = copyTransferTree(src);
-            // printf("dst->prev->right: %d\n", dst->prev->right);
-            // printf("dst: %d\n", dst);
             freeTransferTree(dst);
         }
         else{
-            // printf("bad child\n");
             // other default behavior is ok too
             freeTransferTree(dst->left);
             freeTransferTree(dst->right);
@@ -450,15 +420,10 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
         }
     }
     else{
-        // printf("root t2\n");
         t = copyTransferTree(t2);
-        // printf("done copying\n");
         // select a random node from t2, and assign a random node from t1 as its left subtree
         transferTree *dst = treeIndex(t,rand()%t2_size);
         transferTree *src = treeIndex(t1,rand()%t1_size);
-
-        // printf("dst: "); printTransferTree(dst);
-        // printf("src: "); printTransferTree(src);
         if(dst == NULL){
             return t;
         }
@@ -468,18 +433,15 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
         }
         else if(isLeftChildOf(dst, dst->prev)){
             // t1 is the left child of its parent
-            // printf("ball_left\n");
             dst->prev->left = copyTransferTree(src);
             freeTransferTree(dst);
         }
         else if(isRightChildOf(dst, dst->prev)){
             // t1 is the right child of its parent
-            // printf("ball_right\n");
             dst->prev->right = copyTransferTree(src);
             freeTransferTree(dst);
         }
         else{
-            // printf("bad child\n");
             // some error happened. Just cut off the tree at the dst point?
             // other default behavior is ok too
             freeTransferTree(dst->left);
@@ -509,6 +471,32 @@ void mutate(transferTree *t, double p){
                     mutate(t->right, p);
                 }
             }
+        }
+    }
+}
+
+void copyTransferArray(int *t1, int *t2){
+    for(int i=0; i<512; i++){
+        t2[i] = t1[i];
+    }
+}
+
+void *crossoverTransitionArray(int *ta1, int *ta2, int *ta){
+    int crossoverPoint = rand()%512;
+    if(rand()%2 == 0){
+        for(int i=0; i<crossoverPoint; i++){
+            ta[i] = ta1[i];
+        }
+        for(int i=crossoverPoint; i<512; i++){
+            ta[i] = ta2[i];
+        }
+    }
+    else{
+        for(int i=0; i<crossoverPoint; i++){
+            ta[i] = ta2[i];
+        }
+        for(int i=crossoverPoint; i<512; i++){
+            ta[i] = ta1[i];
         }
     }
 }
