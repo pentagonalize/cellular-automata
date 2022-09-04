@@ -3,7 +3,7 @@ world_height = 200;
 cell_size = 5;
 ruleset = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 rulestring = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010111110110011000111010101001000111111110111110101101110110110110001010111111111111111111111111111101011110010011011011110000101001101110110111101110000000111111011111001101101110011010110101111110000111110101101110001011111111110111111111110011111011101111111111110001011111010110001100111101111001111110001111101111110111111111110010101111111111001111011111111111"
-ruleset = stringToRuleset(rulestring);
+// ruleset = stringToRuleset(rulestring);
 
 interval = 1;
 
@@ -54,7 +54,8 @@ function draw() {
             }
         }
         updateStep();
-        drawRulesetPicker();
+        // drawRulesetPicker();
+        drawTransferArray();
     }
 }
 
@@ -134,18 +135,43 @@ function drawRulesetPicker() {
                 }
                 context.fillText("1", x_offset + rule_cell_size + 2 , y_offset + 4*rule_cell_size);
                 current_ruleset_cell+=1;
-                console.log(x_offset,y_offset);
+                // console.log(x_offset,y_offset);
             }   
             y_offset += 5 * rule_cell_size;
 
         }
         
-
     }
 }
 
+function drawTransferArray(){
+    var table = document.createElement("table");
 
+    tablestring = "<tr>"
+    for (var i = 0; i < 512; i++)  //loops through the array
+    {
+        val = ruleset[i].toString();
+        my_id = "ta_"+ i.toString();
+        tablestring += "<th id="+ my_id + " style = 'border: 1px solid black;' onClick='editTransferArrayAt("+ my_id.toString()+")'> "+ val+ " </th>";
+    }
+    tablestring += "</tr>"
+    table.innerHTML = tablestring;
+    table.style.cssText += 'border: 1px solid black; border-collapse: collapse;';
+    document.body.append(table);
 
+}
+
+function editTransferArrayAt(entry){
+    val = parseInt(entry.innerText);
+    id = entry.id.substring(3);
+    console.log(val);
+    // console.log("balls");
+    entry.innerText = (val+1)%2;
+    // console.log((val+1)%2);
+    // console.log(ruleset[id]);
+    ruleset[id] = (val+1)%2;
+    // console.log(ruleset[id]);
+}
 
 
 
