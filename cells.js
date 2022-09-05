@@ -44,7 +44,7 @@ function stringToRuleset(rulestring) {
     return ruleArray;
 }
 
-function draw() {
+function draw(){
     var canvas = document.getElementById('canvas');
     if (canvas.getContext) {
         var context = canvas.getContext('2d');
@@ -63,6 +63,34 @@ function startCellUpdate() {
     // creates a new interval object every time? So clear it before starting. This creates new ID every time though
     clearInterval(interval);
     interval = setInterval(updateStep, 50);
+    var canvas = document.getElementById('canvas');
+    canvas.addEventListener('mousedown', (e) => {
+        var rect = canvas.getBoundingClientRect();
+        const pos = {
+          x: (e.clientX - rect.left),
+          y: (e.clientY - rect.top)
+        };
+        var context = canvas.getContext('2d');
+        // This seems wrong, but I used this when drawing the canvas
+        var i = Math.floor(pos.x/cell_size);
+        var j = Math.floor(pos.y/cell_size);
+        if(cellArray[i][j].state == 1){
+            console.log("alive");
+            cellArray[i][j].state = 0;
+            current_cell.update(cellArray[i][(j + 1) % world_height], cellArray[(i + 1) % world_width][(j + 1) % world_height], cellArray[(i + 1) % world_width][j], cellArray[(i + 1) % world_width][(j + world_height - 1) % world_height], cellArray[i][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][j], cellArray[(i + world_width - 1) % world_width][(j + 1) % world_height], ruleset);
+        }
+        else{
+            console.log("dead");
+            cellArray[i][j].state = 1;
+            current_cell.update(cellArray[i][(j + 1) % world_height], cellArray[(i + 1) % world_width][(j + 1) % world_height], cellArray[(i + 1) % world_width][j], cellArray[(i + 1) % world_width][(j + world_height - 1) % world_height], cellArray[i][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][j], cellArray[(i + world_width - 1) % world_width][(j + 1) % world_height], ruleset);
+        }
+        if (current_cell.state == 1) {
+            context.fillStyle = '#000000';
+        } else {
+            context.fillStyle = '#FFFFFF';
+        }
+        context.fillRect(cell_size * i, cell_size * j, cell_size, cell_size);
+    });
 }
 
 function stopCellUpdate() {
