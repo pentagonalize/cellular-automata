@@ -403,7 +403,7 @@ transferTree *crossoverTransferTrees(transferTree *t1, transferTree *t2){
         }
         else if(isLeftChildOf(dst, dst->prev)){
             // dst is the left child of its parent
-=            dst->prev->left = copyTransferTree(src);
+            dst->prev->left = copyTransferTree(src);
             freeTransferTree(dst);
         }
         else if(isRightChildOf(dst, dst->prev)){
