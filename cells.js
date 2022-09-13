@@ -172,6 +172,17 @@ function drawRulesetPicker() {
     }
 }
 
+function toggleCircleColor(id){
+    console.log("hi");
+    var circle = document.getElementById(id);
+    console.log(circle.style.fill);
+    if(circle.style.fill == "rgb(255, 255, 255)"){
+        circle.style.fill = "rgb(88, 196, 197)";
+    }
+    else{
+        circle.style.fill = "rgb(255, 255, 255)";
+    }
+}
 function drawTransferArray(){
     var table = document.createElement("table");
 
