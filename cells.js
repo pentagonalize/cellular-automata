@@ -109,12 +109,16 @@ function resetCells() {
 
 function newCode() {
     ruleset = stringToRuleset(document.getElementById("newCodeInput").value);
+    drawOcterract();
+    resetTransferArray();
 }
 
 function randomCode() {
     for (i = 0; i < 512; i++) {
         ruleset[i] = Math.floor(Math.random() * 2);
     }
+    drawOcterract();
+    resetTransferArray();
 }
 
 function updateStep() {
@@ -140,6 +144,7 @@ function updateStep() {
             }
         }
     }
+    // drawOcterract();
 }
 
 function drawRulesetPicker() { 
@@ -171,18 +176,40 @@ function drawRulesetPicker() {
         
     }
 }
-
-function toggleCircleColor(id){
-    console.log("hi");
-    var circle = document.getElementById(id);
-    console.log(circle.style.fill);
-    if(circle.style.fill == "rgb(255, 255, 255)"){
-        circle.style.fill = "rgb(88, 196, 197)";
+function to9bit(n){
+    if (n < 0 || n > 511 || n % 1 !== 0) {
+        throw new Error(n + " does not fit in a byte");
     }
-    else{
-        circle.style.fill = "rgb(255, 255, 255)";
+    return ("0000000000" + n.toString(2)).substr(-9)
+}
+
+function drawOcterract(){
+    for(var i=0;i<512;i++){
+        console.log(to9bit(i));
+        if(ruleset[i] == 0){
+            var circle = document.getElementById(to9bit(i));
+            circle.style.fill = "rgb(255, 255, 255)";
+        }
+        else{
+            var circle = document.getElementById(to9bit(i));
+            circle.style.fill =  "rgb(0, 204, 102)";
+        }
     }
 }
+function toggleCircleColor(id){
+    console.log('hi');
+    var circle = document.getElementById(id);
+    if(circle.style.fill == "rgb(0, 204, 102)"){
+        console.log("colrd");
+        circle.style.fill = "rgb(255, 255, 255)";
+        ruleset[parseInt(id,2)] = 0;
+    }
+    else{
+        circle.style.fill = "rgb(0, 204, 102)";
+        ruleset[parseInt(id,2)] = 1;
+    }
+}
+
 function drawTransferArray(){
     var table = document.createElement("table");
 
@@ -200,16 +227,30 @@ function drawTransferArray(){
 
 }
 
+function resetTransferArray(){
+    for (var i = 0; i < 512; i++){
+        val = ruleset[i].toString();
+        var entry = document.getElementById("ta_"+i.toString());
+        entry.innerText = val;
+    }
+}
+
 function editTransferArrayAt(entry){
+    // when rulearray is clicked, val is current value
     val = parseInt(entry.innerText);
     id = entry.id.substring(3);
-    console.log(val);
-    // console.log("balls");
     entry.innerText = (val+1)%2;
-    // console.log((val+1)%2);
-    // console.log(ruleset[id]);
     ruleset[id] = (val+1)%2;
-    // console.log(ruleset[id]);
+    // match octerracts
+    if(ruleset[id] == 0){
+        console.log(to9bit(parseInt(id)));
+        var circle = document.getElementById(to9bit(parseInt(id)));
+        circle.style.fill = "rgb(255, 255, 255)";
+    }
+    else{
+        var circle = document.getElementById(to9bit(parseInt(id)));
+        circle.style.fill =  "rgb(0, 204, 102)";
+    }
 }
 
 
