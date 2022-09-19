@@ -2,9 +2,11 @@ world_width = 200;
 world_height = 200;
 cell_size = 5;
 ruleset = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-rulestring = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010111110110011000111010101001000111111110111110101101110110110110001010111111111111111111111111111101011110010011011011110000101001101110110111101110000000111111011111001101101110011010110101111110000111110101101110001011111111110111111111110011111011101111111111110001011111010110001100111101111001111110001111101111110111111111110010101111111111001111011111111111"
-// ruleset = stringToRuleset(rulestring);
-
+// rulestring = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010111110110011000111010101001000111111110111110101101110110110110001010111111111111111111111111111101011110010011011011110000101001101110110111101110000000111111011111001101101110011010110101111110000111110101101110001011111111110111111111110011111011101111111111110001011111010110001100111101111001111110001111101111110111111111110010101111111111001111011111111111"
+ruleFrequency = [];
+for (var i=0; i<512; i++){
+    ruleFrequency.push(0);
+}
 interval = 1;
 
 cellArray = new Array(world_width);
@@ -19,6 +21,7 @@ class Cell {
         this.nextState = state;
     }
     update(cnn, cne, cee, cse, css, csw, cww, cnw, ruleset) {
+        // sets the nextState
         var stateCode = 256 * cnn.state +
             128 * cne.state +
             64 * cee.state +
@@ -28,6 +31,7 @@ class Cell {
             4 * cww.state +
             2 * cnw.state +
             this.state;
+        ruleFrequency[stateCode] += 1;
         this.nextState = ruleset[stateCode];
     }
 }
@@ -56,6 +60,29 @@ function draw(){
         updateStep();
         // drawRulesetPicker();
         drawTransferArray();
+        canvas.addEventListener('mousedown', (e) => {
+        var rect = canvas.getBoundingClientRect();
+        const pos = {
+          x: (e.clientX - rect.left),
+          y: (e.clientY - rect.top)
+        };
+        // This seems wrong, but I used this when drawing the canvas
+        var i = Math.floor(pos.x/cell_size);
+        var j = Math.floor(pos.y/cell_size);
+        if(cellArray[i][j].state == 1){
+            console.log(i,j,"was alive");
+            cellArray[i][j].state = 0;
+            context.fillStyle = '#ffffff';
+            cellArray[i][j].update(cellArray[i][(j + 1) % world_height], cellArray[(i + 1) % world_width][(j + 1) % world_height], cellArray[(i + 1) % world_width][j], cellArray[(i + 1) % world_width][(j + world_height - 1) % world_height], cellArray[i][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][j], cellArray[(i + world_width - 1) % world_width][(j + 1) % world_height], ruleset);
+        }
+        else{
+            console.log(i,j,"was dead");
+            cellArray[i][j].state = 1;
+            context.fillStyle = '#000000';
+            cellArray[i][j].update(cellArray[i][(j + 1) % world_height], cellArray[(i + 1) % world_width][(j + 1) % world_height], cellArray[(i + 1) % world_width][j], cellArray[(i + 1) % world_width][(j + world_height - 1) % world_height], cellArray[i][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][j], cellArray[(i + world_width - 1) % world_width][(j + 1) % world_height], ruleset);
+        }
+        context.fillRect(cell_size * i, cell_size * j, cell_size, cell_size);
+    });
     }
 }
 
@@ -64,33 +91,6 @@ function startCellUpdate() {
     clearInterval(interval);
     interval = setInterval(updateStep, 50);
     var canvas = document.getElementById('canvas');
-    canvas.addEventListener('mousedown', (e) => {
-        var rect = canvas.getBoundingClientRect();
-        const pos = {
-          x: (e.clientX - rect.left),
-          y: (e.clientY - rect.top)
-        };
-        var context = canvas.getContext('2d');
-        // This seems wrong, but I used this when drawing the canvas
-        var i = Math.floor(pos.x/cell_size);
-        var j = Math.floor(pos.y/cell_size);
-        if(cellArray[i][j].state == 1){
-            console.log("alive");
-            cellArray[i][j].state = 0;
-            current_cell.update(cellArray[i][(j + 1) % world_height], cellArray[(i + 1) % world_width][(j + 1) % world_height], cellArray[(i + 1) % world_width][j], cellArray[(i + 1) % world_width][(j + world_height - 1) % world_height], cellArray[i][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][j], cellArray[(i + world_width - 1) % world_width][(j + 1) % world_height], ruleset);
-        }
-        else{
-            console.log("dead");
-            cellArray[i][j].state = 1;
-            current_cell.update(cellArray[i][(j + 1) % world_height], cellArray[(i + 1) % world_width][(j + 1) % world_height], cellArray[(i + 1) % world_width][j], cellArray[(i + 1) % world_width][(j + world_height - 1) % world_height], cellArray[i][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][(j + world_height - 1) % world_height], cellArray[(i + world_width - 1) % world_width][j], cellArray[(i + world_width - 1) % world_width][(j + 1) % world_height], ruleset);
-        }
-        if (current_cell.state == 1) {
-            context.fillStyle = '#000000';
-        } else {
-            context.fillStyle = '#FFFFFF';
-        }
-        context.fillRect(cell_size * i, cell_size * j, cell_size, cell_size);
-    });
 }
 
 function stopCellUpdate() {
@@ -211,16 +211,16 @@ function toggleCircleColor(id){
 }
 
 function drawTransferArray(){
-    var table = document.createElement("table");
+    var table = document.createElement("div");
 
-    tablestring = "<tr>"
+    tablestring = "<td> Left to right, top to bottom display of 512 rule </td> <div> "
     for (var i = 0; i < 512; i++)  //loops through the array
     {
         val = ruleset[i].toString();
         my_id = "ta_"+ i.toString();
-        tablestring += "<th id="+ my_id + " style = 'border: 1px solid black;' onClick='editTransferArrayAt("+ my_id.toString()+")'> "+ val+ " </th>";
+        tablestring += "<div id="+ my_id + " style = 'float:left; border: 1px solid black;' onClick='editTransferArrayAt("+ my_id.toString()+")'> "+ val+ " </div>";
     }
-    tablestring += "</tr>"
+    tablestring += "</div>"
     table.innerHTML = tablestring;
     table.style.cssText += 'border: 1px solid black; border-collapse: collapse;';
     document.body.append(table);

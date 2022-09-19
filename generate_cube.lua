@@ -237,12 +237,12 @@ for t=0, 1 do
             assert(VERTEX_COLOUR[count], "no style for vertex count " .. count)
             print(inspect(v[4]))
             for i = -count/2+1, count/2 do
-                fh:write('  <circle onClick = "toggleCircleColor(this.id)" id="', t, v[4][i+count/2], '" cx="', x+2*VERTEX_RADIUS*i-VERTEX_RADIUS, '" cy="', y, '" r="', VERTEX_RADIUS, '"',
+                fh:write('  <circle onClick = "toggleCircleColor(this.id)" id="',  v[4][i+count/2], t,'" cx="', x+2*VERTEX_RADIUS*i-VERTEX_RADIUS, '" cy="', y, '" r="', VERTEX_RADIUS, '"',
                     ' style="fill: rgb(0, 204, 102);"/>\n')
             end
         else
             for i = -count/2+1, count/2 do
-                fh:write('  <circle onClick = "toggleCircleColor(this.id)" id="', t, v[4][i+count/2], '" cx="', x+2*VERTEX_RADIUS*i-VERTEX_RADIUS, '" cy="', y, '" r="', VERTEX_RADIUS, '"',
+                fh:write('  <circle onClick = "toggleCircleColor(this.id)" id="', v[4][i+count/2],t,  '" cx="', x+2*VERTEX_RADIUS*i-VERTEX_RADIUS, '" cy="', y, '" r="', VERTEX_RADIUS, '"',
                     ' style="fill: rgb(0, 204, 102);"/>\n')
             end
         end
