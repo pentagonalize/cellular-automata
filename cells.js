@@ -1,6 +1,6 @@
-world_width = 200;
+world_width = 300;
 world_height = 200;
-cell_size = 5;
+cell_size = 4;
 ruleset = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 // rulestring = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010111110110011000111010101001000111111110111110101101110110110110001010111111111111111111111111111101011110010011011011110000101001101110110111101110000000111111011111001101101110011010110101111110000111110101101110001011111111110111111111110011111011101111111111110001011111010110001100111101111001111110001111101111110111111111110010101111111111001111011111111111"
 ruleFrequency = [];
@@ -8,6 +8,12 @@ for (var i=0; i<512; i++){
     ruleFrequency.push(0);
 }
 interval = 1;
+density_interval = 1;
+dead_color = [250,205,142];
+live_color = [153,212,239];
+
+dead_color_interp = [136,82,5];
+live_color_interp = [18,91,123];
 
 cellArray = new Array(world_width);
 for (i = 0; i < world_width; i++) {
@@ -90,11 +96,13 @@ function startCellUpdate() {
     // creates a new interval object every time? So clear it before starting. This creates new ID every time though
     clearInterval(interval);
     interval = setInterval(updateStep, 50);
+    density_interval = setInterval(colorByDensity, 200);
     var canvas = document.getElementById('canvas');
 }
 
 function stopCellUpdate() {
     clearInterval(interval);
+    clearInterval(density_interval);
 }
 
 function resetCells() {
@@ -105,6 +113,9 @@ function resetCells() {
         }
     }
     interval = setInterval(updateStep, 50);
+    for(var i=0;i<512;i++){
+        ruleFrequency[i] = 0;
+    }
 }
 
 function newCode() {
@@ -119,6 +130,40 @@ function randomCode() {
     }
     drawOcterract();
     resetTransferArray();
+}
+function sigmoid(z, k){
+    return 1 / (1 + Math.exp(-(z)*k));
+}
+
+function rgbToString(r,g,b){
+    return "rgb("+r.toString()+" , "+ g.toString() + " , "+b.toString()+")";
+}
+
+function colorByDensity(){
+    // shade each octerract node by frequency (normalized somehow probably?)
+    // interpolate blue (alive) from rgb(153, 212, 239)- rgb(9, 45, 61)
+    // interpolate orng (dead) from rgb(250, 205, 142)- rgb(68, 41, 2)
+    var total = 0;
+    for(var i=0;i<512;i++){
+        total += ruleFrequency[i];
+    }
+    for(var i=0;i<512;i++){
+        x = sigmoid(ruleFrequency[i]/total-0.001953, 10000);
+        if(ruleset[i] == 1){
+            r = live_color[0] + (live_color_interp[0]-live_color[0])*x;
+            g = live_color[1] + (live_color_interp[1]-live_color[1])*x;
+            b = live_color[2] + (live_color_interp[2]-live_color[2])*x;
+            var circle = document.getElementById(to9bit(i));
+            circle.style.fill =  "rgb("+r.toString()+" , "+ g.toString() + " , "+b.toString()+")";
+        }
+        else{
+            r = dead_color[0] + (dead_color_interp[0]-dead_color[0])*x;
+            g = dead_color[1] + (dead_color_interp[1]-dead_color[1])*x;
+            b = dead_color[2] + (dead_color_interp[2]-dead_color[2])*x;
+            var circle = document.getElementById(to9bit(i));
+            circle.style.fill =  "rgb("+r.toString()+" , "+ g.toString() + " , "+b.toString()+")";
+        }
+    }
 }
 
 function updateStep() {
@@ -144,7 +189,6 @@ function updateStep() {
             }
         }
     }
-    // drawOcterract();
 }
 
 function drawRulesetPicker() { 
@@ -185,29 +229,35 @@ function to9bit(n){
 
 function drawOcterract(){
     for(var i=0;i<512;i++){
-        console.log(to9bit(i));
         if(ruleset[i] == 0){
             var circle = document.getElementById(to9bit(i));
-            circle.style.fill = "rgb(255, 255, 255)";
+            circle.style.fill = rgbToString(dead_color[0],dead_color[1],dead_color[2]);
+            circle.dataset.state = "dead";
         }
         else{
             var circle = document.getElementById(to9bit(i));
-            circle.style.fill =  "rgb(0, 204, 102)";
+            circle.style.fill = rgbToString(live_color[0],live_color[1],live_color[2]);
+            circle.dataset.state = "alive";
         }
     }
 }
+
 function toggleCircleColor(id){
-    console.log('hi');
     var circle = document.getElementById(id);
-    if(circle.style.fill == "rgb(0, 204, 102)"){
-        console.log("colrd");
-        circle.style.fill = "rgb(255, 255, 255)";
+    // console.log(circle.style.fill);
+    if(circle.dataset.state == "alive"){
+        // console.log("alive - recolor to dead");
+        circle.style.fill = rgbToString(dead_color[0],dead_color[1],dead_color[2]);
+        circle.dataset.state = "dead";
         ruleset[parseInt(id,2)] = 0;
     }
     else{
-        circle.style.fill = "rgb(0, 204, 102)";
+        // console.log("dead - recolor to alive");
+        circle.style.fill = rgbToString(live_color[0],live_color[1],live_color[2]);
+        circle.dataset.state = "alive";
         ruleset[parseInt(id,2)] = 1;
     }
+    console.log(ruleFrequency);
 }
 
 function drawTransferArray(){
@@ -242,14 +292,15 @@ function editTransferArrayAt(entry){
     entry.innerText = (val+1)%2;
     ruleset[id] = (val+1)%2;
     // match octerracts
-    if(ruleset[id] == 0){
-        console.log(to9bit(parseInt(id)));
+    if(ruleset[id] == 1){
         var circle = document.getElementById(to9bit(parseInt(id)));
-        circle.style.fill = "rgb(255, 255, 255)";
+        circle.style.fill = "rgbToString(live_color[0],live_color[1],live_color[2])";
+        circle.dataset.state = "alive";
     }
     else{
         var circle = document.getElementById(to9bit(parseInt(id)));
-        circle.style.fill =  "rgb(0, 204, 102)";
+        circle.style.fill =  rgbToString(dead_color[0],dead_color[1],dead_color[2]);
+        circle.dataset.state = "dead";
     }
 }
 
