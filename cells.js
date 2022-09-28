@@ -2,24 +2,28 @@ world_width = 300;
 world_height = 200;
 cell_size = 4;
 ruleset = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-// rulestring = "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010111110110011000111010101001000111111110111110101101110110110110001010111111111111111111111111111101011110010011011011110000101001101110110111101110000000111111011111001101101110011010110101111110000111110101101110001011111111110111111111110011111011101111111111110001011111010110001100111101111001111110001111101111110111111111110010101111111111001111011111111111"
 ruleFrequency = [];
 for (var i=0; i<512; i++){
     ruleFrequency.push(0);
 }
 interval = 1;
 density_interval = 1;
+
+// color for shading frequency of rules
 dead_color = [250,205,142];
 live_color = [153,212,239];
 
 dead_color_interp = [136,82,5];
 live_color_interp = [18,91,123];
 
+// initialize world array of cells
 cellArray = new Array(world_width);
 for (i = 0; i < world_width; i++) {
     cellArray[i] = new Array(world_height);
 }
+
 class Cell {
+    // cell object
     constructor(x, y, state) {
         this.x = x;
         this.y = y;
@@ -43,6 +47,7 @@ class Cell {
 }
 
 function stringToRuleset(rulestring) {
+    // 512 length string to array ruleset
     ruleArray = new Array(512);
     for (i = 0; i < 512; i++) {
         if (parseInt(rulestring.charAt(i))) {
@@ -55,6 +60,13 @@ function stringToRuleset(rulestring) {
 }
 
 function draw(){
+    // initialize canvas and add click listener for editing cells
+    url = window.location.href;
+    if(url.substring(url.length - 517, url.length - 512) == "rule="){
+        document.getElementById("newCodeInput").value = url.substring(url.length - 512, url.length);
+        ruleset = stringToRuleset(document.getElementById("newCodeInput").value);
+        drawOcterract();
+    }
     var canvas = document.getElementById('canvas');
     if (canvas.getContext) {
         var context = canvas.getContext('2d');
@@ -64,7 +76,6 @@ function draw(){
             }
         }
         updateStep();
-        // drawRulesetPicker();
         drawTransferArray();
         canvas.addEventListener('mousedown', (e) => {
         var rect = canvas.getBoundingClientRect();
@@ -93,19 +104,22 @@ function draw(){
 }
 
 function startCellUpdate() {
-    // creates a new interval object every time? So clear it before starting. This creates new ID every time though
+    // starts the cell simulation at interval 50
+    // also starts shading the octerracts at interval 200
     clearInterval(interval);
     interval = setInterval(updateStep, 50);
-    density_interval = setInterval(colorByDensity, 200);
+    density_interval = setInterval(colorByDensity, 160);
     var canvas = document.getElementById('canvas');
 }
 
 function stopCellUpdate() {
+    // stops simulation and shading
     clearInterval(interval);
     clearInterval(density_interval);
 }
 
 function resetCells() {
+    // randomizes cells
     clearInterval(interval);
     for (i = 0; i < world_width; i++) {
         for (j = 0; j < world_height; j++) {
@@ -118,37 +132,74 @@ function resetCells() {
     }
 }
 
+function clearCells() {
+    // kills all cells
+    clearInterval(interval);
+    for (i = 0; i < world_width; i++) {
+        for (j = 0; j < world_height; j++) {
+            cellArray[i][j].state = 0;
+        }
+    }
+    for(var i=0;i<512;i++){
+        ruleFrequency[i] = 0;
+    }
+    updateStep();
+}
+
+function fillCells() {
+    // kills all cells
+    clearInterval(interval);
+    for (i = 0; i < world_width; i++) {
+        for (j = 0; j < world_height; j++) {
+            cellArray[i][j].state = 1;
+        }
+    }
+    for(var i=0;i<512;i++){
+        ruleFrequency[i] = 0;
+    }
+    updateStep();
+}
+
 function newCode() {
+    // takes in input string in the text box as new ruleset
     ruleset = stringToRuleset(document.getElementById("newCodeInput").value);
     drawOcterract();
     resetTransferArray();
 }
 
 function randomCode() {
+    // randomizes ruleset
     for (i = 0; i < 512; i++) {
         ruleset[i] = Math.floor(Math.random() * 2);
     }
     drawOcterract();
     resetTransferArray();
 }
+
 function sigmoid(z, k){
+    // sigmoid for utility in colorByDensity
     return 1 / (1 + Math.exp(-(z)*k));
 }
 
 function rgbToString(r,g,b){
+    // converts rgb array to string usable by CSS style
     return "rgb("+r.toString()+" , "+ g.toString() + " , "+b.toString()+")";
 }
 
 function colorByDensity(){
     // shade each octerract node by frequency (normalized somehow probably?)
-    // interpolate blue (alive) from rgb(153, 212, 239)- rgb(9, 45, 61)
-    // interpolate orng (dead) from rgb(250, 205, 142)- rgb(68, 41, 2)
+    // interpolate from dead_color to dead_color_interp, and same for live
+
+    // first count total rules used
     var total = 0;
     for(var i=0;i<512;i++){
         total += ruleFrequency[i];
     }
+    // Then scale the count at each position.
+    // We use a very steep sigmoid centered at 1/512 - on average we'd expect equal frequency
+    // Using that we interpolate the shades
     for(var i=0;i<512;i++){
-        x = sigmoid(ruleFrequency[i]/total-0.001953, 10000);
+        x = sigmoid(ruleFrequency[i]/total-0.001953125, 8000);
         if(ruleset[i] == 1){
             r = live_color[0] + (live_color_interp[0]-live_color[0])*x;
             g = live_color[1] + (live_color_interp[1]-live_color[1])*x;
@@ -167,6 +218,7 @@ function colorByDensity(){
 }
 
 function updateStep() {
+    // loop for cell simulation
     var canvas = document.getElementById('canvas');
     if (canvas.getContext) {
         var context = canvas.getContext('2d');
@@ -191,36 +243,8 @@ function updateStep() {
     }
 }
 
-function drawRulesetPicker() { 
-    rule_cell_size = 10;
-    row_length = 32;
-    var canvas = document.getElementById('rulesetCanvas');
-    if (canvas.getContext) {
-        var context = canvas.getContext('2d');
-        current_ruleset_cell = 0;
-        y_offset = 10;
-
-        while(current_ruleset_cell < 512){
-            for(x=0;x<row_length;x++){
-                x_offset = 4 * rule_cell_size * x + rule_cell_size * x;
-                context.fillStyle = '#000000';
-                for(i=0;i<3;i++){
-                    for(j=0;j<3;j++){
-                        context.fillRect(x_offset + rule_cell_size * i, y_offset + rule_cell_size * j, rule_cell_size, rule_cell_size);
-                        context.clearRect(x_offset + rule_cell_size * i + 1, y_offset + rule_cell_size * j + 1, rule_cell_size - 2, rule_cell_size - 2);
-                    }
-                }
-                context.fillText("1", x_offset + rule_cell_size + 2 , y_offset + 4*rule_cell_size);
-                current_ruleset_cell+=1;
-                // console.log(x_offset,y_offset);
-            }   
-            y_offset += 5 * rule_cell_size;
-
-        }
-        
-    }
-}
 function to9bit(n){
+    // utility for number to 9 bit id
     if (n < 0 || n > 511 || n % 1 !== 0) {
         throw new Error(n + " does not fit in a byte");
     }
@@ -228,6 +252,7 @@ function to9bit(n){
 }
 
 function drawOcterract(){
+    // set colors of octerracts
     for(var i=0;i<512;i++){
         if(ruleset[i] == 0){
             var circle = document.getElementById(to9bit(i));
@@ -243,6 +268,7 @@ function drawOcterract(){
 }
 
 function toggleCircleColor(id){
+    // change color
     var circle = document.getElementById(id);
     // console.log(circle.style.fill);
     if(circle.dataset.state == "alive"){
@@ -261,8 +287,8 @@ function toggleCircleColor(id){
 }
 
 function drawTransferArray(){
+    // draw 512 array
     var table = document.createElement("div");
-
     tablestring = "<td> Left to right, top to bottom display of 512 rule </td> <div> "
     for (var i = 0; i < 512; i++)  //loops through the array
     {
@@ -278,6 +304,7 @@ function drawTransferArray(){
 }
 
 function resetTransferArray(){
+    // match transferarray to ruleset
     for (var i = 0; i < 512; i++){
         val = ruleset[i].toString();
         var entry = document.getElementById("ta_"+i.toString());

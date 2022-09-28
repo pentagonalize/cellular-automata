@@ -31,7 +31,7 @@ void display(){
     for(int j=0; j<wrlds[0]->height; j++){
         for(int i=0; i<wrlds[0]->width;i++){
             // Determine whether each cell is presently alive or dead, and draw it
-            for(int a=0;a<9;a++){
+            for(int a=0;a<11;a++){
                 drawCell(wrlds[a], i, j);
             }
         }
@@ -40,7 +40,7 @@ void display(){
     // Manually depress the update rate to not kill computer
     usleep(50000);
     // update cell states depending on ruleset
-    for(int a=0;a<9;a++){
+    for(int a=0;a<11;a++){
         updateWorld(wrlds[a]);
     }
 }
@@ -59,26 +59,32 @@ void keyPressed (unsigned char key, int x, int y) {
             // populate the world with random cells
             reInitializeCells(wrlds[i]);
         }
+        reInitializeCells(wrlds[9]);
+        reInitializeCells(wrlds[10]);
     }
     if(key == 'f'){
         // set parent 1
         int x_co = ((int)floor(x/world_width))%3;
-        int y_co = ((int)floor(y/world_height))%3;
+        int y_co = 2-((int)floor(y/world_height))%3;
         world_index = x_co*3+y_co;
         printf("world_index: %d\n",world_index);
         freeTransferTree(t1);
         t1 = copyTransferTree(trees[world_index]);
         copyTransferArray(wrlds[world_index]->transferArray, ta1);
+        parseTransferTree(t1, wrlds[9]->transferArray);
+        reInitializeCells(wrlds[9]);
     }
     if(key == 'j'){
         // set parent 2
         int x_co = ((int)floor(x/world_width))%3;
-        int y_co = ((int)floor(y/world_height))%3;
+        int y_co = 2-((int)floor(y/world_height))%3;
         world_index = x_co*3+y_co;
         printf("world_index: %d\n",world_index);
         freeTransferTree(t2);
         t2 = copyTransferTree(trees[world_index]);
         copyTransferArray(wrlds[world_index]->transferArray, ta2);
+        parseTransferTree(t2, wrlds[10]->transferArray);
+        reInitializeCells(wrlds[10]);
         // for(int i=0;i<512;i++){
         //     printf("%d", ta2[i]);
         // }
@@ -97,14 +103,32 @@ void keyPressed (unsigned char key, int x, int y) {
 
 void myMouseFunc(int button, int state, int x, int y){
 	if(button == GLUT_LEFT_BUTTON) {
-		int x_co = ((int)floor(x/world_width))%3;
-        int y_co = ((int)floor(y/world_height))%3;
-        world_index = x_co*3+y_co;
-        printf("%d\n",world_index);
-		for(int i=0; i<512; i++){
-            printf("%d", wrlds[world_index]->transferArray[i]);
+        if(x>world_height*cell_size){
+            if(y<world_height*cell_size/2){
+                printf("t1\n",world_index);
+                for(int i=0; i<512; i++){
+                    printf("%d", wrlds[9]->transferArray[i]);
+                }
+                printf("\n\n");
+            }
+            else{
+                printf("t2\n");
+                for(int i=0; i<512; i++){
+                    printf("%d", wrlds[10]->transferArray[i]);
+                }
+                printf("\n\n");
+            }
         }
-        printf("\n\n");
+        else{
+            int x_co = ((int)floor(x/world_width))%3;
+            int y_co = 2-((int)floor(y/world_height))%3;
+            world_index = x_co*3+y_co;
+            printf("%d\n",world_index);
+            for(int i=0; i<512; i++){
+                printf("%d", wrlds[world_index]->transferArray[i]);
+            }
+            printf("\n\n");
+        }
 	}
 }
 
@@ -126,7 +150,7 @@ int main(int argc, char *argv[])
     ta1 = malloc(512*sizeof(int));
     ta2 = malloc(512*sizeof(int));
 
-    wrlds = malloc(9*sizeof(world));
+    wrlds = malloc(11*sizeof(world));
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
             wrlds[i*3+j] = malloc(sizeof(world));
@@ -147,17 +171,51 @@ int main(int argc, char *argv[])
             }
         }
     }
+    wrlds[9] = malloc(sizeof(world));
+    wrlds[9]->width = 100;
+    wrlds[9]->height = 100;
+    wrlds[9]->x_origin = 6000;
+    wrlds[9]->y_origin = 1000;
+    wrlds[9]->cell_size = 20;
+    // generate tranfer array
+    parseTransferTree(t1, wrlds[9]->transferArray);
+    // randomly populate the world with cells, equal probability of being live or dead
+    wrlds[9]->cellArray = malloc(wrlds[9]->width*wrlds[9]->height*sizeof(cell));
+    for(int a=0; a<wrlds[9]->width; a++){
+        wrlds[9]->cellArray[a] = malloc(wrlds[9]->height*sizeof(cell));
+        for(int b=0; b<wrlds[9]->height; b++){
+            wrlds[9]->cellArray[a][b] = newCell(a,b,rand()%2);
+        }
+    }
+
+    wrlds[10] = malloc(sizeof(world));
+    wrlds[10]->width = 100;
+    wrlds[10]->height = 100;
+    wrlds[10]->x_origin = 6000;
+    wrlds[10]->y_origin = 3000;
+    wrlds[10]->cell_size = 20;
+    // generate tranfer array
+    parseTransferTree(t2, wrlds[10]->transferArray);
+    // randomly populate the world with cells, equal probability of being live or dead
+    wrlds[10]->cellArray = malloc(wrlds[10]->width*wrlds[10]->height*sizeof(cell));
+    for(int a=0; a<wrlds[10]->width; a++){
+        wrlds[10]->cellArray[a] = malloc(wrlds[10]->height*sizeof(cell));
+        for(int b=0; b<wrlds[10]->height; b++){
+            wrlds[10]->cellArray[a][b] = newCell(a,b,rand()%2);
+        }
+    }
+
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     // window dimensions
-    glutInitWindowSize(1000, 1000 * 2 * world_height / world_width);
+    glutInitWindowSize(1200, 1000 * 2 * world_height / world_width);
     glutInitWindowPosition(200, 0);
     // dawna linsdell
     glutCreateWindow("Dawna Linsdell");
     glClearColor(1.0, 1.0, 1.0, 1.0);
-    glOrtho(0.f, world_width * cell_size, 0.f, world_height * cell_size, 0.f, 2.f);
-    glViewport(0, 0, world_width, world_height);
+    glOrtho(0.f, world_width *4 /3*cell_size, 0.f, world_height * cell_size, 0.f, 2.f);
+    glViewport(0, 0, 1.5*world_width, world_height);
     glutKeyboardFunc(keyPressed);
     // display loop
     glutDisplayFunc(display);
